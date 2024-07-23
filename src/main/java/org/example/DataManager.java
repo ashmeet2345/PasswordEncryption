@@ -7,7 +7,7 @@ import java.util.Properties;
 
 
 public class DataManager {
-    private static final String url="jdbc:mysql://localhost:3306/JdbcTest";
+    private static final String url="jdbc:mysql://localhost:3306/Jdbctest";
     private static final String user="root";
     private static final String password="***********";
 

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Base64;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class Passwords {
     private static final Random random = new SecureRandom();
@@ -16,6 +17,7 @@ public class Passwords {
     private static final String characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final int iterations = 10000;
     private static final int keylength = 256;
+    private static final String regex="[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?";
     private static HandlingOperations handlingOperations;
     private static final Scanner sc=new Scanner(System.in);
 
@@ -24,6 +26,11 @@ public class Passwords {
     public Passwords(HandlingOperations operations){
 
         handlingOperations=operations;
+    }
+
+    public boolean isEmailValid(String email) {
+        final Pattern EMAIL_REGEX = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+        return EMAIL_REGEX.matcher(email).matches();
     }
 
     public String getSalt(){
@@ -37,6 +44,11 @@ public class Passwords {
     }
 
     public void checkPassword(String password,String email){
+        if(!isEmailValid(email)){
+            System.out.println("At least enter a valid email");
+            return;
+        }
+
         String retrieveSalt= handlingOperations.saltRetrieval(email);
         if(retrieveSalt.isBlank()){
             System.out.println("You are not registered yet");
@@ -56,8 +68,20 @@ public class Passwords {
                 if(Character.toUpperCase(s)=='Y'){
                     newPassword(email,true);
                 } else {
-                    System.out.println("Teri marzi");
-                    return;
+                    System.out.println("You sure?");
+                    char c=sc.next().charAt(0);
+                    if(Character.toUpperCase(c)=='Y')
+                        newPassword(email,true);
+                    else{
+                        System.out.println("Umm, sure?");
+                        char c1=sc.next().charAt(0);
+                        if(Character.toUpperCase(c1)=='Y')
+                            newPassword(email,true);
+                        else{
+                            System.out.println("OK (:");
+                            return;
+                        }
+                    }
                 }
             }
         }
